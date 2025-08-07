@@ -481,23 +481,23 @@ export default function AIConsultantPage() {
             <ul className="space-y-2 text-slate-600">
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                트래픽 패턴 분석
+                <span>트래픽 패턴 분석</span>
               </li>
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                악성 연결 탐지
+                <span>악성 연결 탐지</span>
               </li>
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                데이터 유출 패턴
+                <span>데이터 유출 패턴</span>
               </li>
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                프로토콜 이상 탐지
+                <span>프로토콜 이상 탐지</span>
               </li>
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                위협 인텔리전스 연관 분석
+                <span>위협 인텔리전스 연관 분석</span>
               </li>
             </ul>
           </div>
@@ -511,23 +511,23 @@ export default function AIConsultantPage() {
             <ul className="space-y-2 text-slate-600">
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
-                비밀 노출 탐지
+                <span>비밀 노출 탐지</span>
               </li>
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
-                보안 구성 오류 감사
+                <span>보안 구성 오류 감사</span>
               </li>
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
-                컴플라이언스 검사
+                <span>컴플라이언스 검사</span>
               </li>
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
-                모범 사례 검증
+                <span>모범 사례 검증</span>
               </li>
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
-                위험도 우선순위 지정
+                <span>위험도 우선순위 지정</span>
               </li>
             </ul>
           </div>

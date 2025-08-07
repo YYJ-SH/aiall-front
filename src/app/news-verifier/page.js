@@ -397,19 +397,19 @@ export default function NewsVerifierPage() {
             <ul className="space-y-2 text-slate-600">
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                도메인 신뢰도 검사
+                <span>도메인 신뢰도 검사</span>
               </li>
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                발행 이력
+                <span>발행 이력</span>
               </li>
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                편집 기준
+                <span>편집 기준</span>
               </li>
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                편향성 평가
+                <span>편향성 평가</span>
               </li>
             </ul>
           </div>
@@ -423,19 +423,19 @@ export default function NewsVerifierPage() {
             <ul className="space-y-2 text-slate-600">
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
-                교차 참조 확인
+                <span>교차 참조 확인</span>
               </li>
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
-                사실 검증
+                <span>사실 검증</span>
               </li>
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
-                인용문 검증
+                <span>인용문 검증</span>
               </li>
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
-                타임라인 일관성
+                <span>타임라인 일관성</span>
               </li>
             </ul>
           </div>
@@ -449,19 +449,19 @@ export default function NewsVerifierPage() {
             <ul className="space-y-2 text-slate-600">
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
-                감정적 조작
+                <span>감정적 조작</span>
               </li>
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
-                선정적 언어
+                <span>선정적 언어</span>
               </li>
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
-                논리적 오류
+                <span>논리적 오류</span>
               </li>
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
-                클릭베이트 지표
+                <span>클릭베이트 지표</span>
               </li>
             </ul>
           </div>

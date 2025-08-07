@@ -36,7 +36,62 @@
 - 구성 파일 보안 검토
 - 종합적인 보안 컨설팅 리포트
 
-## 🛠️ 기술 스택
+## 🔌 백엔드 FastAPI 연동
+
+### 서버 실행
+```bash
+# FastAPI 백엔드 서버 (localhost:8000에서 실행)
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
+
+### 환경 변수 설정
+```env
+# 백엔드 FastAPI 서버 URL
+NEXT_PUBLIC_BACKEND_URL=http://localhost:8000
+```
+
+### API 엔드포인트 매핑
+
+**프론트엔드 → 백엔드**
+- `POST /api/backend/mcp-analysis/repository` → `POST /mcp-analysis/analyze-repository`
+- `POST /api/backend/mcp-analysis/files` → `POST /mcp-analysis/analyze-files`
+- `GET /api/backend/mcp-analysis/checklist` → `GET /mcp-analysis/checklist`
+- `GET /api/backend/mcp-analysis/health` → `GET /mcp-analysis/health`
+
+### 백엔드 데이터 모델
+
+#### RepositoryAnalysisRequest
+```python
+class RepositoryAnalysisRequest(BaseModel):
+    repository_url: str
+    branch: str = "main"
+    specific_files: Optional[List[str]] = None
+```
+
+#### FileUploadRequest
+```python
+class FileUploadRequest(BaseModel):
+    files: List[str]  # Base64 encoded files
+```
+
+#### MCPAnalysisResponse
+```python
+class MCPAnalysisResponse(BaseModel):
+    repository_info: Dict[str, Any]
+    security_score: float
+    checklist_results: List[Dict[str, Any]]
+    vulnerabilities: List[Dict[str, Any]]
+    recommendations: List[str]
+    safe: bool
+```
+
+### 연결 상태 모니터링
+- 실시간 백엔드 서버 상태 확인
+- 연결 실패 시 사용자 알림
+- 자동 재연결 기능
+- 오류 처리 및 폴백 메커니즘
+
+
 
 - **Frontend**: Next.js 14, React 18, TypeScript
 - **Styling**: Tailwind CSS, 글래스모피즘 디자인

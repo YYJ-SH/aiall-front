@@ -426,19 +426,19 @@ export default function AudioDeepfakeDetectorPage() {
             <ul className="space-y-2 text-slate-600">
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                스펙트럼 분석 패턴
+                <span>스펙트럼 분석 패턴</span>
               </li>
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                음성 일관성 검사
+                <span>음성 일관성 검사</span>
               </li>
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                시간적 coherence 분석
+                <span>시간적 coherence 분석</span>
               </li>
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                인공물 탐지
+                <span>인공물 탐지</span>
               </li>
             </ul>
           </div>
@@ -452,19 +452,19 @@ export default function AudioDeepfakeDetectorPage() {
             <ul className="space-y-2 text-slate-600">
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-orange-500 rounded-full"></div>
-                탐지 정확도는 품질에 따라 달라집니다
+                <span>탐지 정확도는 품질에 따라 달라집니다</span>
               </li>
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-orange-500 rounded-full"></div>
-                새로운 기술은 탐지를 회피할 수 있습니다
+                <span>새로운 기술은 탐지를 회피할 수 있습니다</span>
               </li>
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-orange-500 rounded-full"></div>
-                짧은 클립은 분석이 더 어려울 수 있습니다
+                <span>짧은 클립은 분석이 더 어려울 수 있습니다</span>
               </li>
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-orange-500 rounded-full"></div>
-                항상 여러 소스를 통해 검증하세요
+                <span>항상 여러 소스를 통해 검증하세요</span>
               </li>
             </ul>
           </div>

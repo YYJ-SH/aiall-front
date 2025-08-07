@@ -388,19 +388,19 @@ export default function ImageDeepfakeDetectorPage() {
             <ul className="space-y-2 text-slate-600">
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                눈 움직임 일관성
+                <span>눈 움직임 일관성</span>
               </li>
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                얼굴 비대칭 탐지
+                <span>얼굴 비대칭 탐지</span>
               </li>
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                표정 진위성
+                <span>표정 진위성</span>
               </li>
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                피부 질감 분석
+                <span>피부 질감 분석</span>
               </li>
             </ul>
           </div>
@@ -414,19 +414,19 @@ export default function ImageDeepfakeDetectorPage() {
             <ul className="space-y-2 text-slate-600">
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
-                압축 아티팩트
+                <span>압축 아티팩트</span>
               </li>
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
-                조명 일관성
+                <span>조명 일관성</span>
               </li>
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
-                해상도 불일치
+                <span>해상도 불일치</span>
               </li>
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
-                색공간 분석
+                <span>색공간 분석</span>
               </li>
             </ul>
           </div>
@@ -440,19 +440,19 @@ export default function ImageDeepfakeDetectorPage() {
             <ul className="space-y-2 text-slate-600">
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
-                GAN 특정 패턴
+                <span>GAN 특정 패턴</span>
               </li>
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
-                훈련 데이터 아티팩트
+                <span>훈련 데이터 아티팩트</span>
               </li>
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
-                노이즈 분포
+                <span>노이즈 분포</span>
               </li>
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
-                시간적 불일치
+                <span>시간적 불일치</span>
               </li>
             </ul>
           </div>

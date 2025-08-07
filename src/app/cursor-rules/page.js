@@ -154,19 +154,19 @@ ${prompt.split(' ').map(word => `- ${word.toLowerCase()} 모범 사례 준수`).
               <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center flex-shrink-0 mt-0.5">
                 <span className="text-white text-xs font-bold">1</span>
               </div>
-              <p className="text-slate-700">프로젝트 유형, 기술 스택, 특별한 요구사항을 설명하세요</p>
+              <span className="text-slate-700">프로젝트 유형, 기술 스택, 특별한 요구사항을 설명하세요</span>
             </div>
             <div className="flex items-start gap-3">
               <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center flex-shrink-0 mt-0.5">
                 <span className="text-white text-xs font-bold">2</span>
               </div>
-              <p className="text-slate-700">"규칙 생성하기" 버튼을 클릭하여 맞춤형 Cursor 규칙을 생성하세요</p>
+              <span className="text-slate-700">"규칙 생성하기" 버튼을 클릭하여 맞춤형 Cursor 규칙을 생성하세요</span>
             </div>
             <div className="flex items-start gap-3">
               <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center flex-shrink-0 mt-0.5">
                 <span className="text-white text-xs font-bold">3</span>
               </div>
-              <p className="text-slate-700">생성된 규칙을 복사하거나 <code className="bg-slate-100 px-2 py-1 rounded text-slate-800">.cursorrules</code> 파일로 다운로드하세요</p>
+              <span className="text-slate-700">생성된 규칙을 복사하거나 <code className="bg-slate-100 px-2 py-1 rounded text-slate-800">.cursorrules</code> 파일로 다운로드하세요</span>
             </div>
           </div>
           <div className="space-y-4">
@@ -174,13 +174,13 @@ ${prompt.split(' ').map(word => `- ${word.toLowerCase()} 모범 사례 준수`).
               <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center flex-shrink-0 mt-0.5">
                 <span className="text-white text-xs font-bold">4</span>
               </div>
-              <p className="text-slate-700">파일을 프로젝트 루트 디렉토리에 배치하세요</p>
+              <span className="text-slate-700">파일을 프로젝트 루트 디렉토리에 배치하세요</span>
             </div>
             <div className="flex items-start gap-3">
               <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center flex-shrink-0 mt-0.5">
                 <span className="text-white text-xs font-bold">5</span>
               </div>
-              <p className="text-slate-700">Cursor가 자동으로 이 규칙들을 사용하여 더 나은 코드 지원을 제공합니다</p>
+              <span className="text-slate-700">Cursor가 자동으로 이 규칙들을 사용하여 더 나은 코드 지원을 제공합니다</span>
             </div>
           </div>
         </div>
