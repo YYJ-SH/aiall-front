@@ -1,72 +1,32 @@
-'use client'
+// app/your-route/page.js
+'use client';
 
-import { useState } from 'react';
-import { Code, Copy, Download, Wand2, Sparkles } from 'lucide-react';
+import { Code, Download, Wand2, Sparkles, AlertTriangle } from 'lucide-react';
+import  {usePromptAnalysis}  from '@/hooks/usePromptAnalysis'; // 경로가 다르면 수정하세요
+import  {AnalysisResult}  from '@/components/ui/AnalysisResult'; // 경로가 다르면 수정하세요
 
 export default function CursorRulesPage() {
-  const [prompt, setPrompt] = useState('');
-  const [generatedRules, setGeneratedRules] = useState('');
-  const [isGenerating, setIsGenerating] = useState(false);
-
-  const generateRules = async () => {
-    if (!prompt.trim()) return;
-    
-    setIsGenerating(true);
-    // TODO: API 호출로 cursor rules 생성
-    // 임시로 샘플 규칙 생성
-    setTimeout(() => {
-      setGeneratedRules(`// ${prompt}을(를) 위해 생성된 Cursor 규칙
-
-// 프로젝트 구조
-- 모든 새 파일에 TypeScript 사용
-- 기존의 커밋 메시지 규칙 준수
-- 일관된 들여쓰기 유지 (스페이스 2개)
-
-// 코딩 스타일  
-- 최신 ES6+ 문법 사용
-- 가능한 경우 let보다 const 사용
-- 의미 있는 변수명 사용
-- 함수에 JSDoc 주석 추가
-
-// React/Next.js 관련
-- 훅과 함께 함수형 컴포넌트 사용
-- 적절한 에러 경계 구현
-- Next.js 13+ app 디렉토리 구조 준수
-- 가능한 경우 서버 컴포넌트 사용
-
-// 사용자 프롬프트 기반 맞춤 규칙:
-${prompt.split(' ').map(word => `- ${word.toLowerCase()} 모범 사례 준수`).join('\n')}
-
-// 한국어 주석 및 문서화
-- 복잡한 로직에는 한국어 주석 추가
-- API 문서는 한국어로 작성
-- 에러 메시지는 사용자 친화적인 한국어로 표시
-`);
-      setIsGenerating(false);
-    }, 2000);
-  };
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(generatedRules);
-  };
-
-  const downloadRules = () => {
-    const blob = new Blob([generatedRules], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = '.cursorrules';
-    a.click();
-    URL.revokeObjectURL(url);
-  };
+  const {
+    prompt,
+    setPrompt,
+    analysisResult,
+    isGenerating,
+    isDownloading,
+    error,
+    copiedStates,
+    generateRules,
+    downloadFiles,
+    downloadCursorRules,
+    copyToClipboard,
+  } = usePromptAnalysis();
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto px-4 py-8 sm:py-12">
       {/* Header */}
       <div className="text-center mb-12">
         <div className="flex justify-center mb-6">
           <div className="relative">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center float">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center">
               <Code className="h-8 w-8 text-white" />
             </div>
             <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500 to-indigo-500 opacity-30 blur-2xl"></div>
@@ -79,108 +39,129 @@ ${prompt.split(' ').map(word => `- ${word.toLowerCase()} 모범 사례 준수`).
           </span>
         </h1>
         <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-          프로젝트 요구사항에 맞는 맞춤형 Cursor 규칙을 생성합니다
+          AI 기반 프롬프트 분석으로 보안 가이드라인과 Cursor 규칙을 생성합니다
         </p>
       </div>
 
       {/* Input Section */}
       <div className="card-glass rounded-3xl p-8 mb-8">
-        <label className="block text-lg font-bold text-slate-800 mb-4">
+        <label htmlFor="prompt-input" className="block text-lg font-bold text-slate-800 mb-4">
           프로젝트 또는 요구사항 설명
         </label>
         <textarea
+          id="prompt-input"
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
-          placeholder="예: Tailwind CSS를 사용하는 React TypeScript 프로젝트, 접근성과 성능에 중점을 둠..."
+          placeholder="예: Tailwind CSS를 사용하는 React TypeScript 프로젝트, 접근성과 성능에 중점을 둠. 사용자 인증과 결제 시스템을 포함하며, 보안이 중요함..."
           className="w-full h-32 bg-white/70 border border-slate-200 rounded-2xl px-6 py-4 text-slate-800 placeholder-slate-500 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 resize-none transition-all"
         />
         
-        <button
-          onClick={generateRules}
-          disabled={!prompt.trim() || isGenerating}
-          className="mt-6 w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-blue-500 to-indigo-500 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed text-white font-semibold rounded-2xl transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/25 hover:transform hover:scale-105 flex items-center justify-center gap-3"
-        >
-          {isGenerating ? (
-            <>
-              <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
-              생성 중...
-            </>
-          ) : (
-            <>
-              <Wand2 className="h-5 w-5" />
-              규칙 생성하기
-            </>
+        <div className="flex flex-col sm:flex-row gap-4 mt-6">
+          <button
+            onClick={generateRules}
+            disabled={!prompt.trim() || isGenerating}
+            className="flex-1 px-8 py-4 bg-gradient-to-r from-blue-500 to-indigo-500 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed text-white font-semibold rounded-2xl transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/25 hover:transform hover:scale-105 flex items-center justify-center gap-3"
+          >
+            {isGenerating ? (
+              <>
+                <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+                분석 중...
+              </>
+            ) : (
+              <>
+                <Wand2 className="h-5 w-5" />
+                AI 분석 시작
+              </>
+            )}
+          </button>
+          
+          {analysisResult && (
+            <button
+              onClick={downloadFiles}
+              disabled={isDownloading}
+              className="px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-500 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed text-white font-semibold rounded-2xl transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-500/25 hover:transform hover:scale-105 flex items-center justify-center gap-3"
+            >
+              {isDownloading ? (
+                 <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+                  생성 중...
+                </>
+              ) : (
+                <>
+                  <Download className="h-5 w-5" />
+                  전체 파일 다운로드
+                </>
+              )}
+            </button>
           )}
-        </button>
+        </div>
       </div>
 
-      {/* Output Section */}
-      {generatedRules && (
-        <div className="card-glass rounded-3xl p-8 mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-2xl font-bold text-slate-800">생성된 규칙</h3>
-            <div className="flex gap-3">
-              <button
-                onClick={copyToClipboard}
-                className="px-4 py-2 card-glass text-slate-700 hover:text-slate-900 font-medium rounded-xl transition-all duration-300 hover:shadow-lg hover:transform hover:scale-105 flex items-center gap-2"
-              >
-                <Copy className="h-4 w-4" />
-                복사
-              </button>
-              <button
-                onClick={downloadRules}
-                className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-medium rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/25 hover:transform hover:scale-105 flex items-center gap-2"
-              >
-                <Download className="h-4 w-4" />
-                다운로드
-              </button>
-            </div>
-          </div>
-          
-          <div className="card-glass rounded-2xl p-6">
-            <pre className="text-sm text-slate-700 overflow-x-auto whitespace-pre-wrap leading-relaxed">
-              {generatedRules}
-            </pre>
+      {/* Error Message */}
+      {error && (
+        <div className="mb-8 p-4 bg-gradient-to-r from-red-50 to-pink-50 border border-red-200 rounded-2xl text-red-700">
+          <div className="flex items-center gap-3">
+            <AlertTriangle className="h-5 w-5 flex-shrink-0" />
+            <p>{error}</p>
           </div>
         </div>
       )}
 
+      {/* Analysis Results */}
+      {analysisResult && (
+        <AnalysisResult
+          result={analysisResult}
+          onCopy={copyToClipboard}
+          onDownloadCursorRules={downloadCursorRules}
+          copiedStates={copiedStates}
+        />
+      )}
+
       {/* Instructions */}
-      <div className="card-glass rounded-3xl p-8">
+       <div className="mt-12 card-glass rounded-3xl p-8">
         <h3 className="text-xl font-bold text-slate-800 mb-6">사용 방법</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="space-y-4">
-            <div className="flex items-start gap-3">
-              <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <span className="text-white text-xs font-bold">1</span>
+            {[
+              "프로젝트 유형, 기술 스택, 보안 요구사항을 자세히 설명하세요",
+              "AI가 프롬프트를 분석하여 보안 가이드라인과 Cursor 규칙을 생성합니다",
+              "생성된 `.cursorrules` 파일을 프로젝트 루트에 배치하세요"
+            ].map((text, index) => (
+              <div key={index} className="flex items-start gap-3">
+                <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-white text-xs font-bold">{index + 1}</span>
+                </div>
+                <span className="text-slate-700">{text}</span>
               </div>
-              <span className="text-slate-700">프로젝트 유형, 기술 스택, 특별한 요구사항을 설명하세요</span>
-            </div>
-            <div className="flex items-start gap-3">
-              <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <span className="text-white text-xs font-bold">2</span>
-              </div>
-              <span className="text-slate-700">"규칙 생성하기" 버튼을 클릭하여 맞춤형 Cursor 규칙을 생성하세요</span>
-            </div>
-            <div className="flex items-start gap-3">
-              <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <span className="text-white text-xs font-bold">3</span>
-              </div>
-              <span className="text-slate-700">생성된 규칙을 복사하거나 <code className="bg-slate-100 px-2 py-1 rounded text-slate-800">.cursorrules</code> 파일로 다운로드하세요</span>
-            </div>
+            ))}
           </div>
           <div className="space-y-4">
-            <div className="flex items-start gap-3">
-              <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <span className="text-white text-xs font-bold">4</span>
+             {[
+              "보안 가이드라인을 참고하여 안전한 개발을 진행하세요",
+              "전체 파일 다운로드로 `security_guidance.md`와 `.cursorrules`를 함께 받으세요"
+            ].map((text, index) => (
+              <div key={index} className="flex items-start gap-3">
+                <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-white text-xs font-bold">{index + 4}</span>
+                </div>
+                <span className="text-slate-700" dangerouslySetInnerHTML={{ __html: text.replace(/`([^`]+)`/g, '<code class="bg-slate-100 px-2 py-1 rounded text-slate-800">$1</code>') }}></span>
               </div>
-              <span className="text-slate-700">파일을 프로젝트 루트 디렉토리에 배치하세요</span>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-8 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl">
+          <h4 className="font-bold text-slate-800 mb-3">🔍 주요 AI 분석 기능</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-600">
+            <div>
+              <strong>• RAG 기반 취약점 검색:</strong> 최신 보안 데이터베이스 활용<br/>
+              <strong>• LLM 심층 분석:</strong> 컨텍스트 기반 맞춤형 가이드라인<br/>
+              <strong>• 패키지 자동 감지:</strong> 기술 스택별 특화 규칙
             </div>
-            <div className="flex items-start gap-3">
-              <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <span className="text-white text-xs font-bold">5</span>
-              </div>
-              <span className="text-slate-700">Cursor가 자동으로 이 규칙들을 사용하여 더 나은 코드 지원을 제공합니다</span>
+            <div>
+              <strong>• 보안 체크리스트:</strong> 단계별 검증 가이드<br/>
+              <strong>• 실무 중심:</strong> 실제 개발 환경에 적용 가능<br/>
+              <strong>• 지속 업데이트:</strong> 최신 보안 트렌드 반영
             </div>
           </div>
         </div>
