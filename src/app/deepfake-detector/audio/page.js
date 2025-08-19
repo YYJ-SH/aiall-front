@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { Volume2, Upload, Play, Pause, AlertTriangle, CheckCircle, BarChart3, Music } from 'lucide-react';
 
 export default function AudioDeepfakeDetectorPage() {
@@ -75,7 +75,8 @@ export default function AudioDeepfakeDetectorPage() {
       const formData = new FormData();
       formData.append('audio_file', file);
 
-      const response = await fetch('/api/audio-deepfake/detect', {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
+      const response = await fetch(`${apiUrl}api/v1/audio-detection/predict/audio`, {
         method: 'POST',
         body: formData,
       });
@@ -88,22 +89,14 @@ export default function AudioDeepfakeDetectorPage() {
       const result = await response.json();
       
       // API 응답을 UI 형식으로 변환
+      const details = (result.analysis_details || {});
       setAnalysisResult({
-        isDeepfake: result.is_fake,
-        confidence: Math.round(result.confidence_score * 100),
-        method: result.detection_method,
-        details: {
-          voicePrint: result.analysis_details.voice_print_score || Math.floor(Math.random() * 30) + 70,
-          spectralAnalysis: result.analysis_details.spectral_analysis_score || Math.floor(Math.random() * 30) + 60,
-          temporalConsistency: result.analysis_details.temporal_consistency_score || Math.floor(Math.random() * 40) + 60,
-          artifactDetection: result.analysis_details.artifact_detection_score || Math.floor(Math.random() * 30) + 70
-        },
-        indicators: result.analysis_details.indicators || [
-          '고주파 대역에서 비정상적인 스펙트럼 패턴이 감지되었습니다',
-          '녹음 전체에서 음성 일관성이 유지되고 있습니다',
-          '명백한 편집 흔적은 발견되지 않았습니다'
-        ],
-        recommendations: result.recommendations || []
+        isDeepfake: result.is_fake ?? result.prediction === "fake",
+        confidence: (result.confidence_score ?? result.confidence ?? 0) || 0,
+        method: result.detection_method || '',
+        details: details,
+        indicators: details.indicators || [],
+        recommendations: Array.isArray(result.recommendations) ? result.recommendations : []
       });
 
     } catch (error) {
@@ -223,20 +216,14 @@ export default function AudioDeepfakeDetectorPage() {
               {/* Audio Player */}
               <div className="card-glass rounded-2xl p-6">
                 <div className="flex items-center justify-center gap-6">
-                  <button
-                    onClick={togglePlayback}
-                    className="w-14 h-14 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full text-white transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/25 hover:transform hover:scale-110 flex items-center justify-center"
-                  >
-                    {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6 ml-1" />}
-                  </button>
-                  <div className="flex-1 text-center">
-                    <p className="text-sm text-slate-600">
-                      {isPlaying ? '재생 중...' : '재생하려면 버튼을 클릭하세요'}
-                    </p>
-                  </div>
+                  
+                  
                   <audio
                     ref={audioRef}
                     src={file ? URL.createObjectURL(file) : ''}
+                    controls
+                    onPlay={() => setIsPlaying(true)}
+                    onPause={() => setIsPlaying(false)}
                     onEnded={() => setIsPlaying(false)}
                   />
                 </div>
@@ -326,7 +313,7 @@ export default function AudioDeepfakeDetectorPage() {
 
           {/* Analysis Details */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-            <div className="card-glass rounded-2xl p-6">
+            {/* <div className="card-glass rounded-2xl p-6">
               <h4 className="text-lg font-bold text-slate-800 mb-4">분석 지표</h4>
               <div className="space-y-4">
                 {Object.entries(analysisResult.details).map(([key, value]) => {
@@ -358,19 +345,9 @@ export default function AudioDeepfakeDetectorPage() {
                   );
                 })}
               </div>
-            </div>
+            </div> */}
 
-            <div className="card-glass rounded-2xl p-6">
-              <h4 className="text-lg font-bold text-slate-800 mb-4">주요 지표</h4>
-              <ul className="space-y-3">
-                {analysisResult.indicators.map((indicator, index) => (
-                  <li key={index} className="flex items-start gap-3 text-sm text-slate-700">
-                    <div className="w-2 h-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mt-2 flex-shrink-0"></div>
-                    {indicator}
-                  </li>
-                ))}
-              </ul>
-            </div>
+           
           </div>
 
           {/* Recommendations */}
@@ -414,41 +391,11 @@ export default function AudioDeepfakeDetectorPage() {
 
       {/* Help Section */}
       <div className="card-glass rounded-3xl p-8">
-        <h3 className="text-xl font-bold text-slate-800 mb-6">작동 방식</h3>
+        <h3 className="text-xl font-bold text-slate-800 mb-6">한계</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          
           <div>
-            <h4 className="font-bold text-slate-700 mb-3 flex items-center gap-2">
-              <div className="w-6 h-6 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center">
-                <BarChart3 className="h-4 w-4 text-white" />
-              </div>
-              탐지 방법
-            </h4>
-            <ul className="space-y-2 text-slate-600">
-              <li className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                <span>스펙트럼 분석 패턴</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                <span>음성 일관성 검사</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                <span>시간적 coherence 분석</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                <span>인공물 탐지</span>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-bold text-slate-700 mb-3 flex items-center gap-2">
-              <div className="w-6 h-6 rounded-lg bg-gradient-to-r from-orange-500 to-red-500 flex items-center justify-center">
-                <AlertTriangle className="h-4 w-4 text-white" />
-              </div>
-              한계
-            </h4>
+          
             <ul className="space-y-2 text-slate-600">
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-orange-500 rounded-full"></div>
@@ -471,5 +418,6 @@ export default function AudioDeepfakeDetectorPage() {
         </div>
       </div>
     </div>
+   
   );
 }

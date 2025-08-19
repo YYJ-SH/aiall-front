@@ -73,7 +73,7 @@ export default function ImageDeepfakeDetectorPage() {
       // [수정] 백엔드 응답으로 핵심 상태만 설정합니다.
       setAnalysisResult({
         isDeepfake: result.prediction.toLowerCase() === 'fake',
-        confidence: Math.round(result.confidence),
+        confidence: result.confidence,
       });
 
     } catch (error) {
