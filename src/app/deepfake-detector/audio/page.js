@@ -51,7 +51,7 @@ export default function AudioDeepfakeDetectorPage() {
                        fileExtension.endsWith('.flac') || fileExtension.endsWith('.m4a');
 
     if (!isValidType) {
-      setUploadError('지원되지 않는 오디오 형식입니다. mp3, wav, flac, m4a만 지원됩니다.');
+      setUploadError('지원되지 않는 오디오 형식입니다. MP3, WAV, FLAC, M4A만 지원됩니다.');
       return;
     }
 
@@ -87,21 +87,47 @@ export default function AudioDeepfakeDetectorPage() {
       }
 
       const result = await response.json();
+      console.log('백엔드 응답:', result); // 디버깅용
       
-      // API 응답을 UI 형식으로 변환
-      const details = (result.analysis_details || {});
+      // 음성 API 응답 형식에 맞게 수정
+      const isDeepfake = result.prediction === "fake";
+      const confidence = result.confidence || 0;
+      
       setAnalysisResult({
-        isDeepfake: result.is_fake ?? result.prediction === "fake",
-        confidence: (result.confidence_score ?? result.confidence ?? 0) || 0,
-        method: result.detection_method || '',
-        details: details,
-        indicators: details.indicators || [],
-        recommendations: Array.isArray(result.recommendations) ? result.recommendations : []
+        isDeepfake: isDeepfake,
+        confidence: Math.round(confidence),
+        method: '딥러닝 기반 음성 분석',
+        details: {},
+        indicators: [],
+        recommendations: [
+          '추가적인 검증을 위해 다른 도구와 비교해보세요',
+          '원본 음성의 출처를 확인하세요',
+          '의심스러운 경우 전문가의 도움을 받으세요'
+        ],
+        rawResult: result // 디버깅용으로 원본 결과도 저장
       });
 
     } catch (error) {
       console.error('음성 분석 오류:', error);
-      setUploadError(error.message || '음성 분석 중 오류가 발생했습니다. 다시 시도해주세요.');
+      
+      // 사용자 친화적인 에러 메시지로 변환
+      let userFriendlyMessage = '음성 분석 중 오류가 발생했습니다.';
+      
+      if (error.message.includes('Format not recognised') || error.message.includes('오디오 분석 실패')) {
+        userFriendlyMessage = '지원되지 않는 오디오 형식입니다. MP3, WAV, FLAC, M4A 파일로 다시 시도해주세요.';
+      } else if (error.message.includes('ffmpeg') || error.message.includes('M4A 파일 처리를 위해서는')) {
+        userFriendlyMessage = 'M4A 파일 처리 중 오류가 발생했습니다. 다른 파일로 시도해주세요.';
+      } else if (error.message.includes('File too large') || error.message.includes('파일 크기')) {
+        userFriendlyMessage = '파일 크기가 너무 큽니다. 50MB 이하의 파일을 사용해주세요.';
+      } else if (error.message.includes('Network') || error.message.includes('fetch')) {
+        userFriendlyMessage = '네트워크 연결에 문제가 있습니다. 인터넷 연결을 확인하고 다시 시도해주세요.';
+      } else if (error.message.includes('500') || error.message.includes('서버 오류')) {
+        userFriendlyMessage = '서버에 일시적인 문제가 있습니다. 잠시 후 다시 시도해주세요.';
+      } else if (error.message.includes('400') || error.message.includes('Bad Request')) {
+        userFriendlyMessage = '잘못된 요청입니다. 다른 오디오 파일로 시도해주세요.';
+      }
+      
+      setUploadError(userFriendlyMessage);
     } finally {
       setIsAnalyzing(false);
     }
@@ -190,14 +216,29 @@ export default function AudioDeepfakeDetectorPage() {
                 className="hidden"
               />
               <div className="mt-6 text-sm text-slate-500 space-y-1">
-                <p>지원 형식: MP3, WAV, M4A, FLAC</p>
+                <p>지원 형식: MP3, WAV, FLAC, M4A</p>
                 <p>최대 파일 크기: 50MB</p>
               </div>
               
               {/* Error Message */}
               {uploadError && (
-                <div className="mt-6 p-4 bg-gradient-to-r from-red-50 to-pink-50 border border-red-200 rounded-2xl text-red-700 text-sm">
-                  {uploadError}
+                <div className="mt-6 p-6 bg-gradient-to-r from-red-50 to-pink-50 border border-red-200 rounded-2xl">
+                  <div className="flex items-start gap-3">
+                    <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <div className="text-red-700 font-semibold mb-2">분석 오류</div>
+                      <div className="text-red-600 text-sm mb-3">{uploadError}</div>
+                      <div className="text-xs text-red-500">
+                        <div className="font-medium mb-1">해결 방법:</div>
+                        <ul className="space-y-1 ml-3">
+                          <li>• 파일 형식이 MP3, WAV, FLAC, M4A 인지 확인해주세요</li>
+                          <li>• 파일 크기가 50MB 이하인지 확인해주세요</li>
+                          <li>• 다른 오디오 파일로 다시 시도해보세요</li>
+                          <li>• 문제가 계속되면 잠시 후 다시 시도해주세요</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
             </>
@@ -312,42 +353,27 @@ export default function AudioDeepfakeDetectorPage() {
           </div>
 
           {/* Analysis Details */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-            {/* <div className="card-glass rounded-2xl p-6">
-              <h4 className="text-lg font-bold text-slate-800 mb-4">분석 지표</h4>
-              <div className="space-y-4">
-                {Object.entries(analysisResult.details).map(([key, value]) => {
-                  const labels = {
-                    voicePrint: '음성 지문',
-                    spectralAnalysis: '스펙트럼 분석', 
-                    temporalConsistency: '시간적 일관성',
-                    artifactDetection: '인공물 탐지'
-                  };
-                  return (
-                    <div key={key} className="space-y-2">
-                      <div className="flex justify-between items-center">
-                        <span className="text-slate-700 font-medium">
-                          {labels[key] || key}
-                        </span>
-                        <span className="text-sm font-bold text-slate-800">{value}%</span>
-                      </div>
-                      <div className="w-full bg-slate-200 rounded-full h-3">
-                        <div 
-                          className={`h-3 rounded-full transition-all duration-1000 ${
-                            value >= 80 ? 'bg-gradient-to-r from-emerald-500 to-teal-500' : 
-                            value >= 60 ? 'bg-gradient-to-r from-yellow-500 to-orange-500' : 
-                            'bg-gradient-to-r from-red-500 to-pink-500'
-                          }`}
-                          style={{ width: `${value}%` }}
-                        ></div>
-                      </div>
-                    </div>
-                  );
-                })}
+          <div className="card-glass rounded-2xl p-6 mb-6">
+            <h4 className="text-lg font-bold text-slate-800 mb-4">분석 세부 정보</h4>
+            <div className="space-y-3 text-slate-700">
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                <span className="font-medium">파일명:</span>
+                <span>{analysisResult.rawResult?.filename || file?.name || '알 수 없음'}</span>
               </div>
-            </div> */}
-
-           
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                <span className="font-medium">판정 결과:</span>
+                <span className={analysisResult.isDeepfake ? 'text-red-600 font-semibold' : 'text-emerald-600 font-semibold'}>
+                  {analysisResult.rawResult?.prediction === 'fake' ? '가짜 (딥페이크)' : '진짜'}
+                </span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <span className="font-medium">신뢰도:</span>
+                <span className="font-semibold">{analysisResult.confidence}%</span>
+              </div>
+            </div>
           </div>
 
           {/* Recommendations */}
@@ -381,15 +407,7 @@ export default function AudioDeepfakeDetectorPage() {
         </div>
       )}
 
-      {/* API Status Indicator */}
-      <div className="text-center mb-8">
-        <div className="inline-flex items-center gap-2 px-4 py-2 card-glass rounded-2xl text-sm text-slate-600">
-          <div className="w-2 h-2 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full animate-pulse"></div>
-          API 서버 연결됨
-        </div>
-      </div>
-
-      {/* Help Section */}
+{/* Help Section */}
       <div className="card-glass rounded-3xl p-8">
         <h3 className="text-xl font-bold text-slate-800 mb-6">한계</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

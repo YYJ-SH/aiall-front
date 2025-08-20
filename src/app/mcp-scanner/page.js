@@ -157,6 +157,7 @@ export default function MCPScannerPage() {
 
   return (
   <div className="max-w-6xl mx-auto">
+    {/* Content */}
     {/* Header */}
     <div className="text-center mb-12">
       <div className="flex justify-center mb-6">
@@ -555,7 +556,36 @@ export default function MCPScannerPage() {
               ))}
             </ul>
           </div>
-        )}
+        )}        
+      </div>
+    )}
+
+    {/* Video Section - Shows when no scan result */}
+    {!scanResult && (
+      <div className="mt-16">
+        <div className="relative rounded-2xl overflow-hidden opacity-60">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-auto max-h-80 object-cover"
+            onLoadStart={() => console.log('비디오 로딩 시작...')}
+            onCanPlayThrough={() => console.log('비디오 로딩 완료!')}
+          >
+            <source src="/mcp-video.mp4" type="video/mp4" />
+            {/* 비디오 로딩 실패 시 폴백 */}
+            <div className="w-full h-80 bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
+              <div className="text-center text-slate-300">
+                <ScanLine className="h-8 w-8 mx-auto mb-1 animate-pulse opacity-50" />
+                <p className="text-xs">영상 로딩중...</p>
+              </div>
+            </div>
+          </video>
+          
+          {/* 배경에 녹아들도록 오버레이 */}
+          <div className="absolute inset-0 bg-white/40 pointer-events-none"></div>
+        </div>
       </div>
     )}
   </div>

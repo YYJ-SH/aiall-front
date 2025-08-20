@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: "AI 보안 도구 모음",
-  description: "딥페이크 탐지, 뉴스 검증, 코드 보안 분석 등 포괄적인 AI 보안 도구",
+  description: "딥페이크 탐지, 코드 보안 분석 등 포괄적인 AI 보안 도구",
   manifest: "/manifest.json",
   themeColor: "#6366f1",
   viewport: "width=device-width, initial-scale=1, maximum-scale=1",

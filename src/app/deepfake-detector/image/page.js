@@ -69,11 +69,16 @@ export default function ImageDeepfakeDetectorPage() {
 
     try {
       const result = await analyzeImage(file);
+      console.log('백엔드 응답:', result); // 디버깅용
       
-      // [수정] 백엔드 응답으로 핵심 상태만 설정합니다.
+      // 백엔드 응답 형식에 맞게 수정
+      const isDeepfake = result.prediction === "deepfake" || result.threshold_predicted === "Fake";
+      const confidence = isDeepfake ? result.confidence_fake : result.confidence_real;
+      
       setAnalysisResult({
-        isDeepfake: result.prediction.toLowerCase() === 'fake',
-        confidence: result.confidence,
+        isDeepfake: isDeepfake,
+        confidence: Math.round(confidence || 0),
+        rawResult: result // 원본 데이터 보존
       });
 
     } catch (error) {
@@ -216,6 +221,9 @@ export default function ImageDeepfakeDetectorPage() {
                       }`}>
                         신뢰도: {analysisResult.confidence}%
                       </p>
+                      <p className="text-sm text-slate-500">
+                        탐지 방법: 딥러닝 기반 이미지 분석
+                      </p>
                     </div>
                   </div>
                   <div className={`px-6 py-3 rounded-2xl text-sm font-bold ${
@@ -228,8 +236,144 @@ export default function ImageDeepfakeDetectorPage() {
                 </div>
               </div>
               
+              {/* Confidence Analysis */}
+              <div className="card-glass rounded-3xl p-8">
+                <h4 className="text-lg font-bold text-slate-800 mb-6">신뢰도 분석</h4>
+                <div className="space-y-4">
+                  {analysisResult.rawResult && (
+                    <>
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-slate-700 font-medium">가짜 확률</span>
+                          <span className="text-sm font-bold text-red-600">
+                            {Math.round(analysisResult.rawResult.confidence_fake || 0)}%
+                          </span>
+                        </div>
+                        <div className="w-full bg-slate-200 rounded-full h-3">
+                          <div 
+                            className="h-3 rounded-full bg-gradient-to-r from-red-500 to-pink-500 transition-all duration-1000"
+                            style={{ width: `${analysisResult.rawResult.confidence_fake || 0}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-slate-700 font-medium">진짜 확률</span>
+                          <span className="text-sm font-bold text-emerald-600">
+                            {Math.round(analysisResult.rawResult.confidence_real || 0)}%
+                          </span>
+                        </div>
+                        <div className="w-full bg-slate-200 rounded-full h-3">
+                          <div 
+                            className="h-3 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 transition-all duration-1000"
+                            style={{ width: `${analysisResult.rawResult.confidence_real || 0}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                      
+                      {/* Overall Assessment */}
+                      <div className="mt-6 p-4 bg-slate-50 rounded-xl">
+                        <div className="flex items-center gap-3 mb-2">
+                          <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                          <span className="font-medium text-slate-700">판정 결과:</span>
+                          <span className={analysisResult.isDeepfake ? 'text-red-600 font-semibold' : 'text-emerald-600 font-semibold'}>
+                            {analysisResult.rawResult.threshold_predicted_ko || '알 수 없음'}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-3 mb-3">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                          <span className="font-medium text-slate-700">임계값:</span>
+                          <span>{(analysisResult.rawResult.threshold * 100) || 70}%</span>
+                        </div>
+                        {analysisResult.rawResult.overall && (
+                          <div className="text-sm text-slate-600">
+                            {analysisResult.rawResult.overall}
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+              
+              {/* Detailed Report */}
+              {analysisResult.rawResult && analysisResult.rawResult.report && (
+                <div className="card-glass rounded-3xl p-8">
+                  <h4 className="text-lg font-bold text-slate-800 mb-4">상세 분석 보고서</h4>
+                  <div className="space-y-4">
+                    {analysisResult.rawResult.report.split('\n').map((line, index) => {
+                      if (line.trim() === '' || line.trim() === '---') return null;
+                      
+                      // 마크다운 파싱
+                      if (line.startsWith('## ')) {
+                        return (
+                          <h5 key={index} className="text-lg font-bold text-slate-800 mt-4">
+                            {line.replace('## ', '')}
+                          </h5>
+                        );
+                      }
+                      
+                      if (line.startsWith('- **') && line.includes('**:')) {
+                        const match = line.match(/- \*\*(.*?)\*\*: (.*)/);
+                        if (match) {
+                          return (
+                            <div key={index} className="flex items-start gap-3 text-slate-700">
+                              <div className="w-2 h-2 bg-pink-500 rounded-full mt-2 flex-shrink-0"></div>
+                              <div>
+                                <span className="font-semibold text-slate-800">{match[1]}:</span>
+                                <span className="ml-2">{match[2]}</span>
+                              </div>
+                            </div>
+                          );
+                        }
+                      }
+                      
+                      if (line.startsWith('- ')) {
+                        return (
+                          <div key={index} className="flex items-start gap-3 text-slate-700">
+                            <div className="w-2 h-2 bg-pink-500 rounded-full mt-2 flex-shrink-0"></div>
+                            <span>{line.replace('- ', '')}</span>
+                          </div>
+                        );
+                      }
+                      
+                      if (line.trim()) {
+                        return (
+                          <p key={index} className="text-slate-700">{line}</p>
+                        );
+                      }
+                      
+                      return null;
+                    }).filter(Boolean)}
+                  </div>
+                </div>
+              )}
+              
               {/* [제거] Technical Info, Analysis Details, Suspicious Areas 카드들이 있던 자리 */}
 
+              {/* Recommendations */}
+              <div className="card-glass rounded-3xl p-8">
+                <h4 className="text-lg font-bold text-slate-800 mb-4">권장사항</h4>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-3 text-slate-700">
+                    <CheckCircle className="h-5 w-5 text-emerald-500 mt-0.5 flex-shrink-0" />
+                    추가적인 검증을 위해 다른 도구와 비교해보세요
+                  </li>
+                  <li className="flex items-start gap-3 text-slate-700">
+                    <CheckCircle className="h-5 w-5 text-emerald-500 mt-0.5 flex-shrink-0" />
+                    원본 이미지의 출처를 확인하세요
+                  </li>
+                  <li className="flex items-start gap-3 text-slate-700">
+                    <CheckCircle className="h-5 w-5 text-emerald-500 mt-0.5 flex-shrink-0" />
+                    의심스러운 경우 전문가의 도움을 받으세요
+                  </li>
+                  <li className="flex items-start gap-3 text-slate-700">
+                    <CheckCircle className="h-5 w-5 text-emerald-500 mt-0.5 flex-shrink-0" />
+                    메타데이터와 EXIF 정보를 확인해보세요
+                  </li>
+                </ul>
+              </div>
+              
               {/* Warning */}
               <div className={`p-6 rounded-2xl border-l-4 ${
                 analysisResult.isDeepfake 
@@ -238,8 +382,8 @@ export default function ImageDeepfakeDetectorPage() {
               }`}>
                 <p className="text-slate-700 leading-relaxed">
                   {analysisResult.isDeepfake 
-                    ? '이 이미지는 AI 조작의 흔적을 보입니다. 여러 소스와 전문가 분석을 통해 검증하는 것을 고려해보세요.'
-                    : '이 이미지는 우리의 분석에 따르면 진짜인 것으로 보입니다. 하지만 딥페이크 기술은 계속해서 빠르게 발전하고 있습니다.'
+                    ? '이 이미지는 AI로 생성되거나 조작된 콘텐츠의 특징을 보입니다. 추가 검증을 권장합니다.'
+                    : '이 이미지는 우리의 분석에 따르면 진짜인 것으로 보입니다. 하지만 기술은 계속 발전하고 있습니다.'
                   }
                 </p>
               </div>
@@ -256,6 +400,34 @@ export default function ImageDeepfakeDetectorPage() {
               </p>
             </div>
           )}
+        </div>
+      </div>
+      
+
+{/* Help Section */}
+<div className="card-glass rounded-3xl p-8 mt-8">
+        <h3 className="text-xl font-bold text-slate-800 mb-6">한계</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div>
+            <ul className="space-y-2 text-slate-600">
+              <li className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 bg-orange-500 rounded-full"></div>
+                <span>탐지 정확도는 이미지 품질에 따라 달라집니다</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 bg-orange-500 rounded-full"></div>
+                <span>새로운 기술은 탐지를 회피할 수 있습니다</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 bg-orange-500 rounded-full"></div>
+                <span>저해상도 이미지는 분석이 더 어려울 수 있습니다</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 bg-orange-500 rounded-full"></div>
+                <span>항상 여러 소스를 통해 검증하세요</span>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>

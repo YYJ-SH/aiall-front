@@ -51,20 +51,20 @@ const navigationItems = [
     description: '이미지 딥페이크 탐지',
     gradient: 'from-pink-500 to-rose-500'
   },
-  {
-    name: '뉴스 검증',
-    href: '/news-verifier',
-    icon: Newspaper,
-    description: '뉴스 진위 판별',
-    gradient: 'from-emerald-500 to-teal-500'
-  },
-  {
-    name: 'AI 컨설턴트',
-    href: '/ai-consultant',
-    icon: Bot,
-    description: 'AI 에이전트 컨설팅',
-    gradient: 'from-orange-500 to-yellow-500'
-  }
+  // {
+  //   name: '뉴스 검증',
+  //   href: '/news-verifier',
+  //   icon: Newspaper,
+  //   description: '뉴스 진위 판별',
+  //   gradient: 'from-emerald-500 to-teal-500'
+  // },
+  // {
+  //   name: 'AI 컨설턴트',
+  //   href: '/ai-consultant',
+  //   icon: Bot,
+  //   description: 'AI 에이전트 컨설팅',
+  //   gradient: 'from-orange-500 to-yellow-500'
+  // }
 ]
 
 export function Navigation() {
@@ -88,7 +88,7 @@ export function Navigation() {
                 <h1 className="text-lg font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                   AI 보안 도구
                 </h1>
-                <p className="text-xs text-slate-500">Security Suite</p>
+                <p className="text-xs text-slate-500">Ai-ALL-IN-ONE</p>
               </div>
             </div>
           </div>
