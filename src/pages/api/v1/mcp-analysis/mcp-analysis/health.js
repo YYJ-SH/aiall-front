@@ -5,7 +5,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const response = await fetch('http://127.0.0.1:8000/api/v1/mcp-analysis/mcp-analysis/health');
+    const response = await fetch('http://210.125.93.56:8000/api/v1/mcp-analysis/mcp-analysis/health');
     const data = await response.json();
     
     if (!response.ok) {

@@ -11,7 +11,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Prompt is required' });
     }
 
-    const response = await fetch('http://127.0.0.1:8000/api/v1/prompt-analysis/analyze/download', {
+    const response = await fetch('http://210.125.93.56:8000/api/v1/prompt-analysis/analyze/download', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

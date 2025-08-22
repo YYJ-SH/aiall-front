@@ -47,7 +47,7 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ### 환경 변수 설정
 ```env
 # 백엔드 FastAPI 서버 URL
-NEXT_PUBLIC_BACKEND_URL=http://localhost:8000
+NEXT_PUBLIC_BACKEND_URL=http://210.125.93.56:8000
 ```
 
 ### API 엔드포인트 매핑

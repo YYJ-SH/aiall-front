@@ -35,7 +35,7 @@ export default async function handler(req, res) {
       contentType: audioFile.mimetype,
     });
 
-    const response = await fetch('http://127.0.0.1:8000/api/v1/audio-detection/detect', {
+    const response = await fetch('http://210.125.93.56:8000/api/v1/audio-detection/detect', {
       method: 'POST',
       body: formData,
       headers: formData.getHeaders(),
